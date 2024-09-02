@@ -25,12 +25,11 @@ app.post('/summarize', async (req, res) => {
     if (!text || text.length < 200) {
       return res.status(400).json({ error: "Text must be at least 200 characters long." });
     }
-  try {
-    const summary = await summarizeText(text);
-    res.json({ summary });
+    try {
+      const summary = await summarizeText(text);
+      res.send(summary); // Send only the summary text
   } catch (error) {
-    console.error('Error summarizing text:', error);
-    res.status(500).json({ error: "An error occurred while summarizing the text." });
+      res.status(500).send("An error occurred while summarizing the text.");
   }
 });
 
@@ -38,3 +37,4 @@ app.post('/summarize', async (req, res) => {
 app.listen(port, () => {
   console.log(`Server running at http://localhost:${port}/`);
 });
+
