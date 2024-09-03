@@ -12,7 +12,9 @@ Replit
 
 ## Back end
 Node.js
+
 Express
+
 Hugging Face Inference API
 
 ## Front end
