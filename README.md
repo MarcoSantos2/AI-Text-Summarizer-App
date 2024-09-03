@@ -3,7 +3,6 @@ AI-powered text summarizer app
 Add-on: app will create an image based on the text provided
 
 ## Tech stack
-These are the tools and technologies that we’ll be using to build our app!
 
 ## API platform
 Postman
