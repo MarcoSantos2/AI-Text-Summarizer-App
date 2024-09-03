@@ -24,79 +24,74 @@ function verifyTextLength(e) {
 }
 
 function submitData(e) {
+  e.preventDefault(); // Prevent default form submission behavior
 
-    // This is used to add animation to the submit button
-    submitButton.classList.add("submit-button--loading");
-    
-    const text_to_summarize = textArea.value;
+  // Start the loading state
+  submitButton.classList.add("submit-button--loading");
   
-    const myHeaders = new Headers();
-    myHeaders.append("Content-Type", "application/json");
-    myHeaders.append("Authorization", "Bearer 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");
-    
-    const raw = JSON.stringify({
-      "text": text_to_summarize
-    });
-    
-    const requestOptions = {
-      method: "POST",
-      headers: myHeaders,
-      body: raw,
-      redirect: "follow"
-    };
-    
-    fetch('/summarize', requestOptions)
-    .then(response => response.text()) // Response will be summarized text
-    .then(summary => {
+  const text_to_summarize = textArea.value;
 
-      // Update the output text area with new summary
-      summarizedTextArea.value = summary;
+  const myHeaders = new Headers();
+  myHeaders.append("Content-Type", "application/json");
+  myHeaders.append("Authorization", "Bearer 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");
+  
+  const raw = JSON.stringify({
+    "text": text_to_summarize
+  });
+  
+  const requestOptions = {
+    method: "POST",
+    headers: myHeaders,
+    body: raw,
+    redirect: "follow"
+  };
+  
+  fetch('/summarize', requestOptions)
+  .then(response => {
+      if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+      return response.text();
+  }) // Response will be summarized text
+  .then(summary => {
 
-      // Stop the spinning loading animation
-      submitButton.classList.remove("submit-button--loading");
-    })
-    .catch(error => {
-      console.log(error.message);
-    });
+    // Update the output text area with new summary
+    summarizedTextArea.value = summary;
+
+    // Stop the loading state
+    submitButton.classList.remove("submit-button--loading");
+  })
+  .catch(error => {
+    console.error("There was an error with the request:", error.message);
+    // Stop the loading state in case of error
+    submitButton.classList.remove("submit-button--loading");
+  });
 }
 
- // Carousel functionality
- $(document).ready(function(){
-  // Initialize Owl Carousel
-  $('.owl-carousel').owlCarousel({
-      loop: true,
-      margin: 10,
-      nav: true,  // Enable the navigation buttons provided by Owl Carousel
-      center: true, // This option centers the active item
-      items: 3, // Number of items visible at once
-      autoplay: true,  // Enable autoplay
-      autoplayTimeout: 3000,  // 3 seconds between slides
-      autoplayHoverPause: true,  // Pause on hover
-      responsive: {
-          0: {
-              items: 1
-          },
-          600: {
-              items: 3
-          },
-          1000: {
-              items: 5
-          }
-      }
-  });
-
-  // Change cursor to closed hand when clicking an image
-  $('.owl-carousel .item').on('mousedown', function() {
-      $(this).css('cursor', 'url("images/closehand.png"), auto');
-  });
-
-  // Revert to open hand cursor when releasing the mouse
-  $('.owl-carousel .item').on('mouseup', function() {
-      $(this).css('cursor', 'url("images/handpointer.svg"), auto');
-  });
-
-  // Set the cursor to open hand by default when hovering
-  $('.owl-carousel .item').hover(function() {
-      $(this).css('cursor', 'url("images/handpointer.svg"), auto');
-  });
+// Carousel functionality
+$(document).ready(function(){
+// Initialize Owl Carousel
+$('.owl-carousel').owlCarousel({
+    loop: true,
+    margin: 10,
+    nav: false,  // disable the navigation buttons provided by Owl Carousel
+    dots: true,
+    center: true, // This option centers the active item
+    items: 3, // Number of items visible at once
+    autoplay: true,  // Enable autoplay
+    autoplayTimeout: 2000,  // 2 seconds between slides
+    autoplayHoverPause: true,  // Pause on hover
+    responsive: {
+        0: {
+            items: 1
+        },
+        600: {
+            items: 3
+        },
+        1000: {
+            items: 5
+        }
+    }
 });
+});
+
