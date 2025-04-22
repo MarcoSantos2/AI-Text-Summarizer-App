@@ -6,13 +6,11 @@ require('dotenv').config();
 const app = express();
 const port = 3000;
 
-// Serve static files from the 'frontend' directory
 app.use(express.static(path.join(__dirname, '../frontend')));
 
 // Middleware to parse JSON bodies
 app.use(express.json());
 
-// Route to serve the main HTML file
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, '../frontend/index.html'));
 });
@@ -33,9 +31,6 @@ app.post('/summarize', async (req, res) => {
   }
 });
 
-// Start the server
 app.listen(port, () => {
   console.log(`Server running at http://localhost:${port}/`);
 });
-
-
