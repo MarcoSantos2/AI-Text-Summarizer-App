@@ -25,10 +25,11 @@ app.post('/summarize', async (req, res) => {
     }
     try {
       const summary = await summarizeText(text);
-      res.send(summary); // Send only the summary text
-  } catch (error) {
-      res.status(500).send("An error occurred while summarizing the text.");
-  }
+      res.send(summary);
+    } catch (error) {
+      console.error('Summarize error:', error.message);
+      res.status(500).send(error.message || 'An error occurred while summarizing the text.');
+    }
 });
 
 app.listen(port, () => {

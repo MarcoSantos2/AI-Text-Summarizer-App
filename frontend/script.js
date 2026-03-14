@@ -24,7 +24,6 @@ function submitData(e) {
 
   const myHeaders = new Headers();
   myHeaders.append("Content-Type", "application/json");
-  myHeaders.append("Authorization", `Bearer ${process.env.HUGGING_FACE_API_KEY}`);
   
   const raw = JSON.stringify({
     "text": text_to_summarize
