@@ -6,14 +6,19 @@ require('dotenv').config();
 const app = express();
 const port = 3000;
 
-app.use(express.static(path.join(__dirname, '../frontend')));
-
 // Middleware to parse JSON bodies
 app.use(express.json());
 
+// Routes must come before static so / serves landing, not index.html
 app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, '../frontend/landing.html'));
+});
+
+app.get('/app', (req, res) => {
   res.sendFile(path.join(__dirname, '../frontend/index.html'));
 });
+
+app.use(express.static(path.join(__dirname, '../frontend')));
 
 // Summarization endpoint
 app.post('/summarize', async (req, res) => {
