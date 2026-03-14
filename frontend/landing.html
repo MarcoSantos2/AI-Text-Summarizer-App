@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Summarize — AI-Powered Text Summarization</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      font-size: 17px;
+      line-height: 1.6;
+      color: #1d1d1f;
+      background: #fbfbfd;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 20px 48px;
+      transition: background 0.4s ease, backdrop-filter 0.4s ease;
+    }
+    .nav.scrolled {
+      background: rgba(251, 251, 253, 0.8);
+      backdrop-filter: saturate(180%) blur(20px);
+      -webkit-backdrop-filter: saturate(180%) blur(20px);
+      box-shadow: 0 1px 0 rgba(0,0,0,0.06);
+    }
+    .nav-logo {
+      font-size: 22px;
+      font-weight: 600;
+      letter-spacing: -0.02em;
+      color: #1d1d1f;
+      text-decoration: none;
+    }
+    .nav-links {
+      display: flex;
+      gap: 40px;
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+    .nav-links a {
+      font-size: 14px;
+      font-weight: 500;
+      color: #1d1d1f;
+      text-decoration: none;
+      opacity: 0.85;
+      transition: opacity 0.2s ease;
+    }
+    .nav-links a:hover { opacity: 1; }
+
+    .section {
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 120px 24px 100px;
+    }
+    .hero-badge {
+      display: inline-block;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #6e6e73;
+      margin-bottom: 20px;
+      opacity: 0;
+      animation: fadeUp 0.8s ease 0.2s forwards;
+    }
+    .hero h1 {
+      font-size: clamp(48px, 8vw, 80px);
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      line-height: 1.05;
+      margin: 0 0 24px;
+      color: #1d1d1f;
+      opacity: 0;
+      animation: fadeUp 0.8s ease 0.35s forwards;
+    }
+    .hero-sub {
+      font-size: clamp(19px, 2.2vw, 24px);
+      font-weight: 400;
+      color: #6e6e73;
+      max-width: 580px;
+      margin: 0 0 44px;
+      line-height: 1.5;
+      opacity: 0;
+      animation: fadeUp 0.8s ease 0.5s forwards;
+    }
+    .hero-cta {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 16px 32px;
+      font-size: 17px;
+      font-weight: 500;
+      color: #fff;
+      background: #1d1d1f;
+      border: none;
+      border-radius: 980px;
+      cursor: pointer;
+      text-decoration: none;
+      transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+      opacity: 0;
+      animation: fadeUp 0.8s ease 0.65s forwards;
+    }
+    .hero-cta:hover {
+      background: #424245;
+      transform: scale(1.02);
+      box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+    }
+    .hero-cta:active { transform: scale(0.98); }
+    .hero-glow {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 600px;
+      height: 600px;
+      margin: -300px 0 0 -300px;
+      background: radial-gradient(ellipse, rgba(0,113,227,0.08) 0%, transparent 70%);
+      pointer-events: none;
+      z-index: -1;
+    }
+
+    .features {
+      padding: 120px 24px 140px;
+      position: relative;
+    }
+    .features .section { max-width: 980px; }
+    .features-intro {
+      text-align: center;
+      margin-bottom: 72px;
+    }
+    .features-intro h2 {
+      font-size: clamp(32px, 4vw, 48px);
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      margin: 0 0 16px;
+      color: #1d1d1f;
+    }
+    .features-intro p {
+      font-size: 19px;
+      color: #6e6e73;
+      margin: 0;
+      max-width: 520px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .feature-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+    }
+    .feature-card {
+      background: #fff;
+      border-radius: 20px;
+      padding: 40px 32px;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.06);
+      transition: transform 0.35s ease, box-shadow 0.35s ease;
+      opacity: 0;
+      transform: translateY(24px);
+    }
+    .feature-card.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .feature-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 40px rgba(0,0,0,0.08);
+    }
+    .feature-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, #f5f5f7 0%, #e8e8ed 100%);
+      margin-bottom: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+    }
+    .feature-card h3 {
+      font-size: 20px;
+      font-weight: 600;
+      letter-spacing: -0.01em;
+      margin: 0 0 12px;
+      color: #1d1d1f;
+    }
+    .feature-card p {
+      font-size: 15px;
+      color: #6e6e73;
+      margin: 0;
+      line-height: 1.55;
+    }
+
+    .showcase {
+      padding: 0 24px 140px;
+    }
+    .showcase-inner {
+      background: linear-gradient(180deg, #f5f5f7 0%, #eaeaea 100%);
+      border-radius: 24px;
+      padding: 80px 48px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+      opacity: 0;
+      transform: translateY(32px);
+      transition: opacity 0.8s ease, transform 0.8s ease;
+    }
+    .showcase-inner.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .showcase-inner::before {
+      content: "";
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle at 50% 50%, rgba(255,255,255,0.4) 0%, transparent 50%);
+      pointer-events: none;
+    }
+    .showcase h2 {
+      font-size: clamp(28px, 3.5vw, 40px);
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      margin: 0 0 16px;
+      color: #1d1d1f;
+      position: relative;
+    }
+    .showcase p {
+      font-size: 18px;
+      color: #6e6e73;
+      margin: 0 0 40px;
+      max-width: 480px;
+      margin-left: auto;
+      margin-right: auto;
+      position: relative;
+    }
+    .showcase-visual {
+      height: 320px;
+      max-width: 560px;
+      margin: 0 auto;
+      background: #fff;
+      border-radius: 16px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.1);
+      padding: 28px;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .mockup-input,
+    .mockup-output {
+      border: 1px solid #e5e5e7;
+      border-radius: 10px;
+      padding: 14px 16px;
+      font-size: 13px;
+      color: #6e6e73;
+      line-height: 1.5;
+      text-align: left;
+      background: #fbfbfd;
+    }
+    .mockup-input {
+      flex: 1;
+      min-height: 100px;
+    }
+    .mockup-input .line {
+      height: 8px;
+      background: #e5e5e7;
+      border-radius: 4px;
+      margin-bottom: 8px;
+    }
+    .mockup-input .line:nth-child(1) { width: 95%; }
+    .mockup-input .line:nth-child(2) { width: 88%; }
+    .mockup-input .line:nth-child(3) { width: 70%; }
+    .mockup-input .line:nth-child(4) { width: 40%; }
+    .mockup-btn {
+      align-self: center;
+      padding: 10px 24px;
+      font-size: 13px;
+      font-weight: 600;
+      color: #fff;
+      background: #1d1d1f;
+      border: none;
+      border-radius: 980px;
+      cursor: default;
+    }
+    .mockup-output {
+      min-height: 60px;
+      color: #1d1d1f;
+    }
+    .mockup-output .highlight {
+      background: linear-gradient(120deg, rgba(0,113,227,0.12) 0%, transparent 100%);
+      padding: 0 2px;
+    }
+
+    .cta-section {
+      padding: 100px 24px 120px;
+      text-align: center;
+    }
+    .cta-box {
+      max-width: 600px;
+      margin: 0 auto;
+      opacity: 0;
+      transform: translateY(24px);
+      transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+    .cta-box.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .cta-box h2 {
+      font-size: clamp(32px, 4vw, 44px);
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      margin: 0 0 20px;
+      color: #1d1d1f;
+    }
+    .cta-box p {
+      font-size: 19px;
+      color: #6e6e73;
+      margin: 0 0 36px;
+      line-height: 1.5;
+    }
+    .cta-box .hero-cta {
+      opacity: 1;
+      animation: none;
+    }
+
+    .footer {
+      padding: 32px 24px 48px;
+      border-top: 1px solid rgba(0,0,0,0.08);
+    }
+    .footer-inner {
+      max-width: 980px;
+      margin: 0 auto;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+    }
+    .footer-logo {
+      font-size: 14px;
+      font-weight: 600;
+      color: #6e6e73;
+      text-decoration: none;
+    }
+    .footer-links {
+      display: flex;
+      gap: 32px;
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+    .footer-links a {
+      font-size: 12px;
+      color: #6e6e73;
+      text-decoration: none;
+      transition: color 0.2s ease;
+    }
+    .footer-links a:hover { color: #1d1d1f; }
+
+    @keyframes fadeUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @media (max-width: 768px) {
+      .nav { padding: 16px 24px; }
+      .nav-links { gap: 24px; }
+      .nav-links a { font-size: 13px; }
+      .hero { padding: 100px 20px 80px; }
+      .feature-grid { grid-template-columns: 1fr; }
+      .showcase-inner { padding: 48px 24px; }
+      .showcase-visual { height: 240px; }
+      .footer-inner { flex-direction: column; text-align: center; }
+    }
+  </style>
+</head>
+<body>
+  <nav class="nav" id="nav">
+    <a href="#" class="nav-logo">Summarize</a>
+    <ul class="nav-links">
+      <li><a href="#features">Features</a></li>
+      <li><a href="#showcase">How it works</a></li>
+      <li><a href="#cta">Get started</a></li>
+    </ul>
+  </nav>
+
+  <header class="hero" id="hero">
+    <div class="hero-glow" aria-hidden="true"></div>
+    <p class="hero-badge">AI-Powered</p>
+    <h1>Turn long text into clear, concise summaries.</h1>
+    <p class="hero-sub">Paste any article or document. Get a focused summary in seconds. No sign-up required.</p>
+    <a href="/app" class="hero-cta">Try it free</a>
+  </header>
+
+  <section class="features" id="features">
+    <div class="section">
+      <div class="features-intro">
+        <h2>Built for clarity</h2>
+        <p>Everything you need to understand long-form content at a glance.</p>
+      </div>
+      <div class="feature-grid">
+        <article class="feature-card">
+          <div class="feature-icon">⚡</div>
+          <h3>Instant results</h3>
+          <p>Summaries in seconds. Paste your text and get a distilled version without waiting.</p>
+        </article>
+        <article class="feature-card">
+          <div class="feature-icon">🎯</div>
+          <h3>Key points only</h3>
+          <p>AI extracts the main ideas so you can focus on what matters most.</p>
+        </article>
+        <article class="feature-card">
+          <div class="feature-icon">🔒</div>
+          <h3>Private & simple</h3>
+          <p>No accounts, no tracking. Your text is processed and not stored.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="showcase" id="showcase">
+    <div class="section">
+      <div class="showcase-inner">
+        <h2>One click. One summary.</h2>
+        <p>Paste up to 100,000 characters. Our model returns a concise summary tailored to the content.</p>
+        <div class="showcase-visual">
+          <div class="mockup-input">
+            <div class="line"></div>
+            <div class="line"></div>
+            <div class="line"></div>
+            <div class="line"></div>
+          </div>
+          <button type="button" class="mockup-btn" disabled>Summarize</button>
+          <div class="mockup-output">
+            <span class="highlight">Clear, concise summary</span> appears here in seconds.
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="cta-section" id="cta">
+    <div class="cta-box">
+      <h2>Ready to summarize?</h2>
+      <p>Start with any text. No installation, no credit card.</p>
+      <a href="/app" class="hero-cta">Open Summarize</a>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="footer-inner">
+      <a href="#" class="footer-logo">Summarize</a>
+      <ul class="footer-links">
+        <li><a href="#">Privacy</a></li>
+        <li><a href="#">Terms</a></li>
+        <li><a href="#">Contact</a></li>
+      </ul>
+    </div>
+  </footer>
+
+  <script>
+    (function() {
+      var nav = document.getElementById('nav');
+      function onScroll() {
+        nav.classList.toggle('scrolled', window.scrollY > 20);
+      }
+      window.addEventListener('scroll', onScroll, { passive: true });
+      onScroll();
+
+      var observer = new IntersectionObserver(function(entries) {
+        entries.forEach(function(entry) {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('visible');
+            if (entry.target.querySelectorAll) {
+              entry.target.querySelectorAll('.feature-card').forEach(function(el, i) {
+                el.style.transitionDelay = (i * 0.1) + 's';
+              });
+            }
+          }
+        });
+      }, { rootMargin: '0px 0px -80px 0px', threshold: 0 });
+
+      document.querySelectorAll('.feature-card, .showcase-inner, .cta-box').forEach(function(el) {
+        observer.observe(el);
+      });
+    })();
+  </script>
+</body>
+</html>
