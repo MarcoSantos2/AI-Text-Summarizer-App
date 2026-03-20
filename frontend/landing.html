@@ -257,61 +257,22 @@
       position: relative;
     }
     .showcase-visual {
-      height: 320px;
-      max-width: 560px;
+      max-width: 720px;
       margin: 0 auto;
       background: #fff;
       border-radius: 16px;
       box-shadow: 0 20px 60px rgba(0,0,0,0.1);
-      padding: 28px;
+      padding: 0;
       position: relative;
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
+      overflow: hidden;
+      line-height: 0;
     }
-    .mockup-input,
-    .mockup-output {
-      border: 1px solid #e5e5e7;
-      border-radius: 10px;
-      padding: 14px 16px;
-      font-size: 13px;
-      color: #6e6e73;
-      line-height: 1.5;
-      text-align: left;
-      background: #fbfbfd;
-    }
-    .mockup-input {
-      flex: 1;
-      min-height: 100px;
-    }
-    .mockup-input .line {
-      height: 8px;
-      background: #e5e5e7;
-      border-radius: 4px;
-      margin-bottom: 8px;
-    }
-    .mockup-input .line:nth-child(1) { width: 95%; }
-    .mockup-input .line:nth-child(2) { width: 88%; }
-    .mockup-input .line:nth-child(3) { width: 70%; }
-    .mockup-input .line:nth-child(4) { width: 40%; }
-    .mockup-btn {
-      align-self: center;
-      padding: 10px 24px;
-      font-size: 13px;
-      font-weight: 600;
-      color: #fff;
-      background: #1d1d1f;
-      border: none;
-      border-radius: 980px;
-      cursor: default;
-    }
-    .mockup-output {
-      min-height: 60px;
-      color: #1d1d1f;
-    }
-    .mockup-output .highlight {
-      background: linear-gradient(120deg, rgba(0,113,227,0.12) 0%, transparent 100%);
-      padding: 0 2px;
+    .showcase-visual img {
+      width: 100%;
+      height: auto;
+      display: block;
+      vertical-align: top;
+      object-fit: contain;
     }
 
     .cta-section {
@@ -399,7 +360,6 @@
       .hero { padding: 100px 20px 80px; }
       .feature-grid { grid-template-columns: 1fr; }
       .showcase-inner { padding: 48px 24px; }
-      .showcase-visual { height: 240px; }
       .footer-inner { flex-direction: column; text-align: center; }
     }
   </style>
@@ -454,16 +414,7 @@
         <h2>One click. One summary.</h2>
         <p>Paste up to 100,000 characters. Our model returns a concise summary tailored to the content.</p>
         <div class="showcase-visual">
-          <div class="mockup-input">
-            <div class="line"></div>
-            <div class="line"></div>
-            <div class="line"></div>
-            <div class="line"></div>
-          </div>
-          <button type="button" class="mockup-btn" disabled>Summarize</button>
-          <div class="mockup-output">
-            <span class="highlight">Clear, concise summary</span> appears here in seconds.
-          </div>
+          <img src="/images/image45.png" alt="Summarize app interface preview" loading="lazy" decoding="async">
         </div>
       </div>
     </div>
